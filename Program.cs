@@ -24,8 +24,7 @@ namespace AntlrGen
     /// </summary>
     class Program
     {
-        const string AntlrJarFileName = @"../antlr4-csharp-4.6.4-complete.jar";
-        static string AntlrFullJarFileName;
+        static string AntlrFullJarFileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "antlr4-csharp-4.6.4-complete.jar");
 
         static void Main(string[] args)
         {
@@ -54,17 +53,6 @@ namespace AntlrGen
             var result = cmdParser.Parse(argsWithUsualSlashes);
             if (!result.HasErrors)
             {
-                if (string.IsNullOrEmpty(solutionDir))
-                {
-                    string currentPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-                    AntlrFullJarFileName = Path.Combine(currentPath, "..", "..", "..", "..", "Sources", AntlrJarFileName);
-                }
-                else
-                {
-                    AntlrFullJarFileName = Path.Combine(solutionDir, AntlrJarFileName);
-                }
-                AntlrFullJarFileName = NormDirSeparator(AntlrFullJarFileName);
-
                 GenerateStatus generateStatus = GenerateStatus.NotGenerated;
                 if (!string.IsNullOrEmpty(lexerFile))
                 {

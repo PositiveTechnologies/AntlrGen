@@ -8,4 +8,10 @@
   <ItemGroup>
     <PackageReference Include="FluentCommandLineParser-netstandard" Version="1.4.3.13" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Update="antlr4-csharp-4.6.4-complete.jar">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

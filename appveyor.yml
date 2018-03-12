@@ -11,7 +11,7 @@ after_build:
 - cmd: >-
     cd bin/Release/netcoreapp2.0/publish
 
-    7z a AntlrGen-%APPVEYOR_BUILD_VERSION%.zip *.dll *.json
+    7z a AntlrGen-%APPVEYOR_BUILD_VERSION%.zip *.dll *.json *.jar
 artifacts:
 - path: bin/$(configuration)/netcoreapp2.0/publish/*.zip
   name: AntlrGen
