@@ -210,7 +210,7 @@ namespace AntlrGen
                     Console.Write(outputText);
                 }
                 string errorText = process.StandardError.ReadToEnd();
-                if (string.IsNullOrWhiteSpace(errorText))
+                if (string.IsNullOrWhiteSpace(errorText) || errorText.Contains("Picked up _JAVA_OPTIONS")) // TODO: fix workaround
                 {
                     string grammarsString = string.Join(", ", importedGrammarFileNames);
                     string modifyDateString = $"// {grammarsString} date: {maxModifyDate}";
