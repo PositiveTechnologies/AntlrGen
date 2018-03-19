@@ -90,6 +90,10 @@ namespace AntlrGen
             string shortGrammarFileName = Path.GetFileName(grammarFileName);
             string grammarFileDir = Path.GetDirectoryName(grammarFileName);
             string outputDirectory = output ?? Path.Combine(grammarFileDir, "Generated");
+            if (!Path.IsPathRooted(outputDirectory))
+            {
+                outputDirectory = Path.Combine(Environment.CurrentDirectory, outputDirectory);
+            }
             if (!Directory.Exists(outputDirectory))
             {
                 Directory.CreateDirectory(outputDirectory);
