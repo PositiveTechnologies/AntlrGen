@@ -222,10 +222,11 @@ namespace AntlrGen
                 }
                 else
                 {
-                    Console.Write(errorText);
+                    Console.WriteLine($"Arguments: {process.StartInfo.Arguments}");
+                    Console.WriteLine($"Error: {errorText}");
                     File.Delete(generatedFileName);
                     result = GenerateStatus.Error;
-                    Console.WriteLine($"{lexerParser}  for {shortGrammarFileName} generation error.");
+                    Console.WriteLine($"{lexerParser} for {shortGrammarFileName} generation error.");
                 }
             }
             else
