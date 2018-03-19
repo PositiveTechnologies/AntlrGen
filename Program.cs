@@ -81,6 +81,11 @@ namespace AntlrGen
 
         private static GenerateStatus GenerateCode(string grammarFileName, string packageName, bool lexer, bool listener, string output, string superClass)
         {
+            if (!Path.IsPathRooted(grammarFileName))
+            {
+                grammarFileName = Path.Combine(Environment.CurrentDirectory, grammarFileName);
+            }
+
             DateTime grammarModifyDate = File.GetLastWriteTime(grammarFileName);
             grammarModifyDate = DateTime.Parse(grammarModifyDate.ToString());
             grammarModifyDate = new DateTime(
