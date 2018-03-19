@@ -24,8 +24,6 @@ namespace AntlrGen
     /// </summary>
     class Program
     {
-        static string AntlrFullJarFileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "antlr4-csharp-4.6.4-complete.jar");
-
         static void Main(string[] args)
         {
             var argsWithUsualSlashes = args.Select(arg => arg.Replace('/', '\\')).ToArray(); // TODO: bug in FluentCommandLineParser.
@@ -40,7 +38,8 @@ namespace AntlrGen
             string packageName = null;
             bool listener = false;
             string output = null;
-            string solutionDir = null;
+            bool standard = false;
+
             cmdParser.Setup<string>("lexer").Callback(lexer => lexerFile = NormDirSeparator(lexer));
             cmdParser.Setup<string>("parser").Callback(parser => parserFile = NormDirSeparator(parser));
             cmdParser.Setup<string>("package").Callback(package => packageName = package);
@@ -48,7 +47,7 @@ namespace AntlrGen
             cmdParser.Setup<string>("output").Callback(o => output = NormDirSeparator(o));
             cmdParser.Setup<string>("lexerSuperClass").Callback(param => lexerSuperClass = param);
             cmdParser.Setup<string>("parserSuperClass").Callback(param => parserSuperClass = param);
-            cmdParser.Setup<string>("solutionDir").Callback(param => solutionDir = param);
+            cmdParser.Setup<bool>("standard").Callback(param => standard = param);
 
             var result = cmdParser.Parse(argsWithUsualSlashes);
             if (!result.HasErrors)
@@ -56,7 +55,7 @@ namespace AntlrGen
                 GenerateStatus generateStatus = GenerateStatus.NotGenerated;
                 if (!string.IsNullOrEmpty(lexerFile))
                 {
-                    generateStatus = GenerateCode(lexerFile, packageName, true, listener, output, lexerSuperClass);
+                    generateStatus = GenerateCode(lexerFile, packageName, true, listener, output, lexerSuperClass, standard);
                 }
                 if (generateStatus == GenerateStatus.Error)
                 {
@@ -65,7 +64,7 @@ namespace AntlrGen
 
                 if (!string.IsNullOrEmpty(parserFile))
                 {
-                    generateStatus = GenerateCode(parserFile, packageName, false, listener, output, parserSuperClass);
+                    generateStatus = GenerateCode(parserFile, packageName, false, listener, output, parserSuperClass, standard);
                 }
                 if (generateStatus == GenerateStatus.Error)
                 {
@@ -79,7 +78,7 @@ namespace AntlrGen
             }
         }
 
-        private static GenerateStatus GenerateCode(string grammarFileName, string packageName, bool lexer, bool listener, string output, string superClass)
+        private static GenerateStatus GenerateCode(string grammarFileName, string packageName, bool lexer, bool listener, string output, string superClass, bool standard)
         {
             if (!Path.IsPathRooted(grammarFileName))
             {
@@ -190,6 +189,8 @@ namespace AntlrGen
                     return GenerateStatus.Error;
                 }
 
+                string antlrJarName = standard ? "antlr-4.7.1-standard.jar" : "antlr-4.6.4-optimized.jar";
+                string antlrFullJarFileName = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), antlrJarName);
                 string lexerParser = lexer ? "Lexer" : "Parser";
                 Console.WriteLine($"{lexerParser} for {shortGrammarFileName} generation...");
                 System.Diagnostics.Process process = new System.Diagnostics.Process();
@@ -197,7 +198,7 @@ namespace AntlrGen
                 string visitorListenerStr = (listener ? "-listener " : "-no-listener ") + "-visitor";
                 string superClassParam = string.IsNullOrEmpty(superClass) ? "" : $"-DsuperClass={superClass}";
                 string packageParam = string.IsNullOrEmpty(packageName) ? "" : $"-package {packageName}";
-                process.StartInfo.Arguments = $@"-jar ""{AntlrFullJarFileName}"" -o ""{outputDirectory}"" ""{grammarFileName}"" -Dlanguage=CSharp_v4_5 {visitorListenerStr} {superClassParam} -Werror {packageParam}";
+                process.StartInfo.Arguments = $@"-jar ""{antlrFullJarFileName}"" -o ""{outputDirectory}"" ""{grammarFileName}"" -Dlanguage={(standard ? "CSharp" : "CSharp_v4_5")} {visitorListenerStr} {superClassParam} -Werror {packageParam}";
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.UseShellExecute = false;
