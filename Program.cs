@@ -185,11 +185,10 @@ namespace AntlrGen
                 Console.WriteLine($"{lexerParser} for {shortGrammarFileName} generation...");
                 System.Diagnostics.Process process = new System.Diagnostics.Process();
                 process.StartInfo.FileName = "java";
-                process.StartInfo.WorkingDirectory = grammarFileDir;
                 string visitorListenerStr = (listener ? "-listener " : "-no-listener ") + "-visitor";
                 string superClassParam = string.IsNullOrEmpty(superClass) ? "" : $"-DsuperClass={superClass}";
                 string packageParam = string.IsNullOrEmpty(packageName) ? "" : $"-package {packageName}";
-                process.StartInfo.Arguments = $@"-jar ""{AntlrFullJarFileName}"" -o ""{outputDirectory}"" ""{shortGrammarFileName}"" -Dlanguage=CSharp_v4_5 {visitorListenerStr} {superClassParam} -Werror {packageParam}";
+                process.StartInfo.Arguments = $@"-jar ""{AntlrFullJarFileName}"" -o ""{outputDirectory}"" ""{grammarFileName}"" -Dlanguage=CSharp_v4_5 {visitorListenerStr} {superClassParam} -Werror {packageParam}";
                 process.StartInfo.RedirectStandardError = true;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.UseShellExecute = false;
